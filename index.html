@@ -2721,15 +2721,56 @@ function triggerCcScan() {
       <div class="s-label">// POST-MATCH PRESS CONFERENCE</div>
       <div class="contact-h" id="contactH">LET'S BUILD<br><span style="color:var(--neon)">SOMETHING.</span></div>
       <div class="contact-sub">Got an opportunity? A project? A question? The mic is open — I'm taking them.</div>
-      <div class="form">
-        <div class="form-row">
-          <input class="fi" type="text" placeholder="Your Name">
-          <input class="fi" type="text" placeholder="Company / University">
-        </div>
-        <input class="fi" type="email" placeholder="Email Address">
-        <textarea class="fi" placeholder="Your message / opportunity..."></textarea>
-        <button class="f-submit">SEND THE BALL</button>
+
+      <!-- SUCCESS STATE (hidden until submit) -->
+      <div id="formSuccess" style="display:none;background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.25);border-radius:14px;padding:32px 24px;margin-bottom:24px;text-align:center;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="margin:0 auto 12px;display:block;"><circle cx="12" cy="12" r="10" stroke="#00FF87" stroke-width="1.8"/><path d="M8 12l3 3 5-6" stroke="#00FF87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:#00FF87;letter-spacing:.06em;margin-bottom:6px;">MESSAGE RECEIVED</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.14em;">I'LL GET BACK TO YOU SOON · SAMAY DAS</div>
       </div>
+
+      <form class="form" id="contactForm" action="https://formspree.io/f/mzdkezgl" method="POST">
+        <div class="form-row">
+          <input class="fi" type="text" name="name" placeholder="Your Name" required>
+          <input class="fi" type="text" name="company" placeholder="Company / University">
+        </div>
+        <input class="fi" type="email" name="email" placeholder="Email Address" required>
+        <textarea class="fi" name="message" placeholder="Your message / opportunity..." required></textarea>
+        <button type="submit" class="f-submit" id="submitBtn">SEND THE BALL</button>
+      </form>
+
+      <script>
+      document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('contactForm');
+        const success = document.getElementById('formSuccess');
+
+        btn.textContent = 'SENDING...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            form.style.display = 'none';
+            success.style.display = 'block';
+          } else {
+            btn.textContent = 'FAILED — TRY EMAIL INSTEAD';
+            btn.style.opacity = '1';
+            btn.disabled = false;
+          }
+        } catch {
+          btn.textContent = 'FAILED — TRY EMAIL INSTEAD';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        }
+      });
+      </script>
       <div class="socials">
         <a class="soc-link" href="https://github.com/samaydas" target="_blank">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
